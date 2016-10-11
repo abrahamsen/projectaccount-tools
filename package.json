@@ -2,9 +2,9 @@
   "name": "projectaccount-tools",
   "version": "0.0.1",
   "description": "test",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "4.*",
