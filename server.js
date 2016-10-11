@@ -42,6 +42,11 @@ app.get("/projectdata", function(req, res){
   pa.getProjectData(req.query.key, req.query.project, respond(req, res));
 });
 
+app.all("/auth/callback", function(req, res) {
+  res.header("Content-Type", "application/json");
+  res.send(JSON.stringify(req.query, null, 2));
+});
+
 app.all("*", function(req, res) {
   res.status(404).send("Page was not found, sorry!");
 });
