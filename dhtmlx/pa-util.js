@@ -16,7 +16,8 @@ if (typeof Array.prototype.map !== "function") {
         n = this.length, 
         a = [];
     for (i = 0; i < n; i++) {
-      if (i in this) a[i] = callback.call(thisArg, this[i]);
+      if (i in this) 
+        a[i] = callback.call(thisArg, this[i]);
     }
     return a;
   };
