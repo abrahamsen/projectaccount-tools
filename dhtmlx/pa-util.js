@@ -159,7 +159,7 @@ function paPopup(cbs) {
   });
   
   p.appendTo("body");
-  $("#apiKey").val(getCookie("apiKey") || ""); //
+  $("#apiKey").val(getCookie("apiKey") || ""); //devtest
   $("#projectPopup").dialog({
     modal: true,
     resizable: false,
