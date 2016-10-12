@@ -1,4 +1,3 @@
-/*jslint node*/
 "use strict";
 
 var path = require("path");
