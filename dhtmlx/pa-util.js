@@ -159,7 +159,7 @@ function paPopup(cbs) {
   });
   
   p.appendTo("body");
-  $("#apiKey").val(getCookie("apiKey") || ""); //TODO: remove hardcoded key 7tk4w5u3otq
+  $("#apiKey").val(getCookie("apiKey") || "");
   $("#projectPopup").dialog({
     modal: true,
     resizable: false,
