@@ -14,7 +14,7 @@ app.all("*", function (req, res, next) {
   next();
 });
 
-app.get("/user", function (req, res){
+app.get("/user", function (req, res) {
   pa.getUser(req.query.key, function (err, user) {
     if (err) {
       return res.status(500).send(err);
@@ -24,7 +24,7 @@ app.get("/user", function (req, res){
 });
 
 function respond(req, res) {
-  return function(err, data) {
+  return function (err, data) {
     if (err) {
       return res.status(400).send(err);
     }
