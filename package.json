@@ -12,7 +12,7 @@
     "async": "0.9.*"
   },
   "engines": {
-    "node": "*"
+    "node": "6.*"
   },
   "repository": {
     "type": "git",
