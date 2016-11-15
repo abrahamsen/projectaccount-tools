@@ -18,14 +18,11 @@
     "node": "6.*",
     "npm": "*"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/abrahamsen/projectaccount-tools"
-  },
+  "repository": "abrahamsen/projectaccount-tools",
   "keywords": [
     "node",
     "heroku",
     "express"
   ],
-  "license": "UNLICENSE",
+  "license": "Unlicense",
 }
