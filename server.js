@@ -18,9 +18,6 @@ var sessionConfig = {
 };
 app.use(session(sessionConfig));
 
-app.use("/v1", express.static(path.resolve(__dirname, "v1")));
-app.use(express.static(path.resolve(__dirname, "dhtmlx")));
-
 app.all("*", function (req, res, next) {
   console.log("request: " + req.url);
   next();
@@ -31,7 +28,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(auth.router);
 
-app.get("/user", function (req, res) {
+app.get("/user", auth.required, function (req, res) {
   pa.getUser(req.query.key, function (err, user) {
     if (err) {
       return res.status(500).send(err);
@@ -51,36 +48,40 @@ function respond(req, res) {
   };
 }
 
-app.get("/project", function (req, res) {
+app.get("/project", auth.required, function (req, res) {
   console.log("projects, user: ", req.user);
   pa.getProjects(req.query.key, respond(req, res));
 });
 
-app.get("/module", function (req, res) {
+app.get("/module", auth.required, function (req, res) {
   pa.getModules(req.query.key, req.query.project, respond(req, res));
 });
 
-app.get("/milestone", function (req, res) {
+app.get("/milestone", auth.required, function (req, res) {
   pa.getMilestones(req.query.key, req.query.project, respond(req, res));
 });
 
-app.get("/task", function (req, res) {
+app.get("/task", auth.required, function (req, res) {
   pa.getTasks(req.query.key, req.query.project, respond(req, res));
 });
 
-app.get("/projectdata", function (req, res) {
+app.get("/projectdata", auth.required, function (req, res) {
   pa.getProjectData(req.query.key, req.query.project, respond(req, res));
 });
 
-app.all("/auth/callback", function (req, res) {
+/*app.all("/auth/callback", auth.required, function (req, res) {
   res.header("Content-Type", "application/json");
   res.send(JSON.stringify(req.query, null, 2));
-});
+});*/
+
+app.use("/v1", express.static(path.resolve(__dirname, "v1")));
+app.use(express.static(path.resolve(__dirname, "dhtmlx")));
 
 app.all("*", function (req, res) {
   res.status(404).send("Page was not found, sorry!");
 });
 
 app.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
-  console.log("Server started");
+  var address = this.address();
+  console.log(`Server started on http://${address.address}:${address.port}`);
 });
