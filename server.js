@@ -4,19 +4,23 @@ var path = require("path");
 var express = require("express");
 var session = require("express-session");
 var passport = require("passport");
-var pa = require("./projectAccount.js");
+var pa = require("./projectAccount");
 var config = require("./config");
 var auth = require("./oauth2");
+var compression = require("compression");
 
 var app = express();
 
-var sessionConfig = {
+//enable gzip
+app.use(compression()); 
+
+//enable session storage
+app.use(session({
   resave: false,
   saveUninitialized: false,
   secret: config.get("SECRET"),
   signed: true
-};
-app.use(session(sessionConfig));
+}));
 
 app.all("*", function (req, res, next) {
   console.log("request: " + req.url);
@@ -28,15 +32,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(auth.router);
 
-app.get("/user", auth.required, function (req, res) {
-  pa.getUser(req.query.key, function (err, user) {
-    if (err) {
-      return res.status(500).send(err);
-    }
-    res.send(user);
-  });
-});
-
 function respond(req, res) {
   return function (err, data) {
     if (err) {
@@ -44,9 +39,18 @@ function respond(req, res) {
     }
 
     res.header("Content-Type", "application/json");
-    res.send(JSON.stringify(data, null, 2));
+    res.send(data);//JSON.stringify(data, null, 2));
   };
 }
+
+app.get("/", auth.required, function(req, res, next) {
+  console.log("requesting /: ", req.user);
+  next();
+})
+
+app.get("/user", auth.required, function (req, res) {
+  pa.getUser(req.query.key, respond(req, res));
+});
 
 app.get("/project", auth.required, function (req, res) {
   console.log("projects, user: ", req.user);
@@ -68,11 +72,6 @@ app.get("/task", auth.required, function (req, res) {
 app.get("/projectdata", auth.required, function (req, res) {
   pa.getProjectData(req.query.key, req.query.project, respond(req, res));
 });
-
-/*app.all("/auth/callback", auth.required, function (req, res) {
-  res.header("Content-Type", "application/json");
-  res.send(JSON.stringify(req.query, null, 2));
-});*/
 
 app.use("/v1", express.static(path.resolve(__dirname, "v1")));
 app.use(express.static(path.resolve(__dirname, "client")));

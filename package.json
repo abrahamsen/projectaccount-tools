@@ -9,6 +9,7 @@
   "dependencies": {
     "express": "4.*",
     "express-session": "^1.14.0",
+    "compression": "^1.6.2",
     "extend": "2.*",
     "async": "0.9.*",
     "nconf": "^0.8.4",

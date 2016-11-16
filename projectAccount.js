@@ -38,7 +38,7 @@ function cacheableRequest(key, resource, cb) {
   
 }
 
-var pa = {
+var pa = module.exports = {
   getUser: function(key, cb) {
     request(key, "me", {}, cb);
   },
@@ -65,5 +65,3 @@ var pa = {
     }, cb);
   }
 };
-
-module.exports = pa;
