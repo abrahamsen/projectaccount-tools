@@ -75,7 +75,7 @@ app.get("/projectdata", auth.required, function (req, res) {
 });*/
 
 app.use("/v1", express.static(path.resolve(__dirname, "v1")));
-app.use(express.static(path.resolve(__dirname, "dhtmlx")));
+app.use(express.static(path.resolve(__dirname, "client")));
 
 app.all("*", function (req, res) {
   res.status(404).send("Page was not found, sorry!");
