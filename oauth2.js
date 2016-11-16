@@ -9,7 +9,7 @@ const router = express.Router();
 function extractProfile(profile) {
   let imageUrl = "";
   let email = "";
-  
+
   if (profile.photos && profile.photos.length) {
     imageUrl = profile.photos[0].value;
   }
@@ -57,19 +57,19 @@ function addTemplateVariables(req, res, next) {
 }
 
 router.get("/auth/login", (req, res, next) => {
-    if (req.query.return) {
-      req.session.oauth2return = req.query.return;
-    }
-    next();
-  },
+  if (req.query.return) {
+    req.session.oauth2return = req.query.return;
+  }
+  next();
+},
   passport.authenticate("google", { scope: ["email", "profile"] })
 );
 
 router.get("/auth/callback", passport.authenticate("google"), (req, res) => {
-    const redirect = req.session.oauth2return || "/";
-    delete req.session.oauth2return;
-    res.redirect(redirect);
-  }
+  const redirect = req.session.oauth2return || "/";
+  delete req.session.oauth2return;
+  res.redirect(redirect);
+}
 );
 
 router.get("/auth/logout", (req, res) => {

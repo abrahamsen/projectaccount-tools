@@ -4,17 +4,22 @@
   "description": "test",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
+    "async": "0.9.*",
+    "compression": "^1.6.2",
     "express": "4.*",
     "express-session": "^1.14.0",
-    "compression": "^1.6.2",
     "extend": "2.*",
-    "async": "0.9.*",
+    "mongodb": "^2.2.11",
     "nconf": "^0.8.4",
     "passport": "^0.3.2",
     "passport-google-oauth20": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   },
   "engines": {
     "node": "6.*",

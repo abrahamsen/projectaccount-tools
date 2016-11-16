@@ -1,15 +1,16 @@
 "use strict";
 
-var path = require("path");
-var express = require("express");
-var session = require("express-session");
-var passport = require("passport");
-var pa = require("./projectAccount");
-var config = require("./config");
-var auth = require("./oauth2");
-var compression = require("compression");
+const path = require("path");
+const express = require("express");
+const session = require("express-session");
+const passport = require("passport");
+const pa = require("./projectAccount");
+const config = require("./config");
+const auth = require("./oauth2");
+const compression = require("compression");
+const data = require("./data");
 
-var app = express();
+const app = express();
 
 //enable gzip
 app.use(compression()); 
@@ -22,7 +23,7 @@ app.use(session({
   signed: true
 }));
 
-app.all("*", function (req, res, next) {
+app.all("*", (req, res, next) => {
   console.log("request: " + req.url);
   next();
 });
@@ -43,44 +44,44 @@ function respond(req, res) {
   };
 }
 
-app.get("/", auth.required, function(req, res, next) {
+app.get("/", auth.required, (req, res, next) => {
   console.log("requesting /: ", req.user);
   next();
 })
 
-app.get("/user", auth.required, function (req, res) {
+app.get("/user", auth.required, (req, res) => {
   pa.getUser(req.query.key, respond(req, res));
 });
 
-app.get("/project", auth.required, function (req, res) {
+app.get("/project", auth.required, (req, res) => {
   console.log("projects, user: ", req.user);
   pa.getProjects(req.query.key, respond(req, res));
 });
 
-app.get("/module", auth.required, function (req, res) {
+app.get("/module", auth.required, (req, res) => {
   pa.getModules(req.query.key, req.query.project, respond(req, res));
 });
 
-app.get("/milestone", auth.required, function (req, res) {
+app.get("/milestone", auth.required, (req, res) => {
   pa.getMilestones(req.query.key, req.query.project, respond(req, res));
 });
 
-app.get("/task", auth.required, function (req, res) {
+app.get("/task", auth.required, (req, res) => {
   pa.getTasks(req.query.key, req.query.project, respond(req, res));
 });
 
-app.get("/projectdata", auth.required, function (req, res) {
+app.get("/projectdata", auth.required, (req, res) => {
   pa.getProjectData(req.query.key, req.query.project, respond(req, res));
 });
 
 app.use("/v1", express.static(path.resolve(__dirname, "v1")));
 app.use(express.static(path.resolve(__dirname, "client")));
 
-app.all("*", function (req, res) {
+app.all("*", (req, res) => {
   res.status(404).send("Page was not found, sorry!");
 });
 
-app.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
-  var address = this.address();
-  console.log(`Server started on http://${address.address}:${address.port}`);
+var server = app.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", () => {
+  var address = server.address();
+  console.log(`[${(new Date().toString()).substr(0, (new Date().toString()).indexOf(" ("))}] Server started on http://${address.address}:${address.port}`);
 });
