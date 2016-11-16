@@ -2,9 +2,21 @@
 
 var path = require("path");
 var express = require("express");
+var session = require("express-session");
+var passport = require("passport");
 var pa = require("./projectAccount.js");
+var config = require("./config");
+var auth = require("./oauth2");
 
 var app = express();
+
+var sessionConfig = {
+  resave: false,
+  saveUninitialized: false,
+  secret: config.get("SECRET"),
+  signed: true
+};
+app.use(session(sessionConfig));
 
 app.use("/v1", express.static(path.resolve(__dirname, "v1")));
 app.use(express.static(path.resolve(__dirname, "dhtmlx")));
@@ -13,6 +25,11 @@ app.all("*", function (req, res, next) {
   console.log("request: " + req.url);
   next();
 });
+
+// OAuth2
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(auth.router);
 
 app.get("/user", function (req, res) {
   pa.getUser(req.query.key, function (err, user) {
@@ -35,6 +52,7 @@ function respond(req, res) {
 }
 
 app.get("/project", function (req, res) {
+  console.log("projects, user: ", req.user);
   pa.getProjects(req.query.key, respond(req, res));
 });
 
@@ -66,4 +84,3 @@ app.all("*", function (req, res) {
 app.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
   console.log("Server started");
 });
-//testfast
