@@ -69,8 +69,7 @@ router.get("/auth/callback", passport.authenticate("google"), (req, res) => {
   const redirect = req.session.oauth2return || "/";
   delete req.session.oauth2return;
   res.redirect(redirect);
-}
-);
+});
 
 router.get("/auth/logout", (req, res) => {
   req.logout();

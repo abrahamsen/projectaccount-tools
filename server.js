@@ -3,6 +3,7 @@
 const path = require("path");
 const express = require("express");
 const session = require("express-session");
+const bodyParser = require("body-parser");
 const passport = require("passport");
 const pa = require("./projectAccount");
 const config = require("./config");
@@ -11,6 +12,9 @@ const compression = require("compression");
 const data = require("./data");
 
 const app = express();
+app.set("view engine", "ejs");
+
+app.use(bodyParser.urlencoded({extended: true}))
 
 //enable gzip
 app.use(compression()); 
@@ -44,10 +48,43 @@ function respond(req, res) {
   };
 }
 
+function render(res, file, data) {
+  res.render("master.ejs", { content: file, data: data});
+}
+
 app.get("/", auth.required, (req, res, next) => {
-  console.log("requesting /: ", req.user);
-  next();
-})
+  data.user.get(req.user.id, (err, user) => {
+    if (user == null) {
+      data.user.save(req.user, (err, user) => {
+        if (err) 
+          return console.error(err);
+        res.redirect("/usertoken");
+      });
+    }
+    else if (!user.token)
+      res.redirect("/usertoken");
+    else
+      next();
+  });
+});
+
+app.get("/usertoken", auth.required, (req, res) => {
+  res.render("usertoken.ejs", {user: req.user});
+});
+
+app.post("/usertoken", auth.required, (req, res) => {
+  data.user.get(req.user.id, (err, user) => {
+    if (user == null) {
+      res.redirect("/usertoken/error");
+    }
+    else {
+      user.token = req.body.usertoken;
+      data.user.save(user, (err, result) => {
+        res.redirect("/");
+      });
+    }
+  });
+});
 
 app.get("/user", auth.required, (req, res) => {
   pa.getUser(req.query.key, respond(req, res));
