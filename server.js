@@ -48,31 +48,48 @@ function respond(req, res) {
   };
 }
 
-function render(res, file, data) {
-  res.render("master.ejs", { content: file, data: data});
+var requireUser = [
+  auth.required, 
+  (req, res, next) => {
+    data.user.get(req.user.id, (err, user) => {
+      if (user == null) {
+        data.user.save(req.user, (err, user) => {
+          if (err) 
+            return console.error(err);
+          res.redirect("/usertoken");
+        });
+      }
+      else if (!user.token)
+        res.redirect("/usertoken");
+      else {
+        req.session.usertoken = user.token;
+        next();
+      }
+    });
+  }
+];
+
+function render(req, res, file, data) {
+  console.log("render: user", req.user);
+  res.render("master.ejs", { content: file, req: req, data: data});
 }
 
-app.get("/", auth.required, (req, res, next) => {
-  data.user.get(req.user.id, (err, user) => {
-    if (user == null) {
-      data.user.save(req.user, (err, user) => {
-        if (err) 
-          return console.error(err);
-        res.redirect("/usertoken");
-      });
-    }
-    else if (!user.token)
-      res.redirect("/usertoken");
-    else
-      next();
-  });
+app.get("/", (req, res, next) => {
+  if (req.user)
+    res.redirect("/gantt");
+  else
+    render(req, res, "index.ejs"); 
 });
 
-app.get("/usertoken", auth.required, (req, res) => {
+app.get("/gantt/:project?", requireUser, (req, res, next) => {
+  render(req, res, "gantt.ejs");
+});
+
+app.get("/usertoken", requireUser, (req, res) => {
   res.render("usertoken.ejs", {user: req.user});
 });
 
-app.post("/usertoken", auth.required, (req, res) => {
+app.post("/usertoken", requireUser, (req, res) => {
   data.user.get(req.user.id, (err, user) => {
     if (user == null) {
       res.redirect("/usertoken/error");
@@ -86,29 +103,29 @@ app.post("/usertoken", auth.required, (req, res) => {
   });
 });
 
-app.get("/user", auth.required, (req, res) => {
-  pa.getUser(req.query.key, respond(req, res));
+app.get("/user", requireUser, (req, res) => {
+  pa.getUser(req.session.usertoken, respond(req, res));
 });
 
-app.get("/project", auth.required, (req, res) => {
+app.get("/project", requireUser, (req, res) => {
   console.log("projects, user: ", req.user);
-  pa.getProjects(req.query.key, respond(req, res));
+  pa.getProjects(req.session.usertoken, respond(req, res));
 });
 
-app.get("/module", auth.required, (req, res) => {
-  pa.getModules(req.query.key, req.query.project, respond(req, res));
+app.get("/module", requireUser, (req, res) => {
+  pa.getModules(req.session.usertoken, req.query.project, respond(req, res));
 });
 
-app.get("/milestone", auth.required, (req, res) => {
-  pa.getMilestones(req.query.key, req.query.project, respond(req, res));
+app.get("/milestone", requireUser, (req, res) => {
+  pa.getMilestones(req.session.usertoken, req.query.project, respond(req, res));
 });
 
-app.get("/task", auth.required, (req, res) => {
-  pa.getTasks(req.query.key, req.query.project, respond(req, res));
+app.get("/task", requireUser, (req, res) => {
+  pa.getTasks(req.session.usertoken, req.query.project, respond(req, res));
 });
 
-app.get("/projectdata", auth.required, (req, res) => {
-  pa.getProjectData(req.query.key, req.query.project, respond(req, res));
+app.get("/projectdata", requireUser, (req, res) => {
+  pa.getProjectData(req.session.usertoken, req.query.project, respond(req, res));
 });
 
 app.use("/v1", express.static(path.resolve(__dirname, "v1")));

@@ -8,7 +8,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
-    "async": "0.9.*",
+    "async": "2.1.*",
     "body-parser": "1.15.*",
     "compression": "1.6.*",
     "ejs": "2.5.*",
