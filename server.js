@@ -69,8 +69,12 @@ var requireUser = [
   }
 ];
 
+function requireData(req, res, next) {
+  //TODO: load data
+  next();
+}
+
 function render(req, res, file, data) {
-  console.log("render: user", req.user);
   res.render("master.ejs", { content: file, req: req, data: data});
 }
 
@@ -81,7 +85,7 @@ app.get("/", (req, res, next) => {
     render(req, res, "index.ejs"); 
 });
 
-app.get("/gantt/:project?", requireUser, (req, res, next) => {
+app.get("/gantt/:project?", requireUser, requireData, (req, res, next) => {
   render(req, res, "gantt.ejs");
 });
 
