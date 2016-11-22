@@ -70,8 +70,15 @@ var requireUser = [
 ];
 
 function requireData(req, res, next) {
-  //TODO: load data
-  next();
+  if (req.session.pa) {
+    next();
+  }
+  else {
+    pa.getUserData(req.session.usertoken, function(data) {
+      req.session.pa = data;
+      next();
+    });
+  }
 }
 
 function render(req, res, file, data) {
@@ -85,7 +92,7 @@ app.get("/", (req, res, next) => {
     render(req, res, "index.ejs"); 
 });
 
-app.get("/gantt/:project?", requireUser, requireData, (req, res, next) => {
+app.get("/gantt/:view?/:project?", requireUser, requireData, (req, res, next) => {
   render(req, res, "gantt.ejs");
 });
 
@@ -106,7 +113,7 @@ app.post("/usertoken", requireUser, (req, res) => {
     }
   });
 });
-
+/*
 app.get("/user", requireUser, (req, res) => {
   pa.getUser(req.session.usertoken, respond(req, res));
 });
@@ -124,12 +131,13 @@ app.get("/milestone", requireUser, (req, res) => {
   pa.getMilestones(req.session.usertoken, req.query.project, respond(req, res));
 });
 
-app.get("/task", requireUser, (req, res) => {
-  pa.getTasks(req.session.usertoken, req.query.project, respond(req, res));
-});
-
 app.get("/projectdata", requireUser, (req, res) => {
   pa.getProjectData(req.session.usertoken, req.query.project, respond(req, res));
+});
+*/
+
+app.get("/task", requireUser, (req, res) => {
+  pa.getTasks(req.session.usertoken, req.query.project, respond(req, res));
 });
 
 app.use("/v1", express.static(path.resolve(__dirname, "v1")));

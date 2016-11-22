@@ -42,13 +42,19 @@ var pa = module.exports = {
   getUser: function(key, cb) {
     request(key, "me", {}, cb);
   },
+  getPersons: function(key, cb) {
+    request(key, "person", {limit: 1000}, cb);
+  },
+  getClients: function(key, cb) {
+    request(key, "client", {limit: 1000}, cb);
+  },
   getProjects: function(key, cb) {
     request(key, "project", {limit: 1000, active: "t"}, cb);
   },
-  getModules: function(key, project, cb) {
+  getModules: function(key, cb) {
     request(key, "projectmodule", {limit: 1000, active: "t", projectid: project}, cb);
   },
-  getMilestones: function(key, project, cb) {
+  getMilestones: function(key, cb) {
     request(key, "milestone", {limit: 1000, complete: "f", projectid: project}, cb);
   },
   getTasks: function(key, project, cb) {
@@ -61,6 +67,19 @@ var pa = module.exports = {
       },
       tasks: function(asyncCb) {
         pa.getTasks(key, project, asyncCb);
+      }
+    }, cb);
+  },
+  getUserData: function(key, cb) {
+    async.parallel({
+      projects: function(asyncCb) {
+        pa.getProjects(key, asyncCb);
+      },
+      persons: function(asyncCb) {
+        pa.getPersons(key, asyncCb);
+      },
+      clients: function(asyncCb) {
+        pa.getClients(key, asyncCb);
       }
     }, cb);
   }

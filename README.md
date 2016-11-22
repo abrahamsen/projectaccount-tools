@@ -7,3 +7,8 @@
 * Install newest NPM v3.9+
 * Install modules - from command prompt in project folder, run `npm install`
 * Install Gulp `npm install -g gulp`
+
+
+### Recommended VSCode Extensions:
+
+* EJS syntax highlighting: QassimFarid.ejs-language-support

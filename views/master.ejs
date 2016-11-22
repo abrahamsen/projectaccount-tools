@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>ProjectAccount-Gantt</title>
 
-        <link rel="stylesheet" href="styles.min.css" type="text/css" media="screen" charset="utf-8">
+        <link rel="stylesheet" href="/styles.min.css" type="text/css" media="screen" charset="utf-8">
         
         <!-- jQuery -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
@@ -33,27 +33,39 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choose Project <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choose View <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <!--TODO: loop on projects
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">One more separated link</a></li>-->
+                                <li><a href="/gantt/project">Project</a></li>
+                                <li><a href="/gantt/resource">Resource</a></li>
+                                <li><a href="/gantt/time">Timespan</a></li>
                             </ul>
                         </li>
                     </ul>
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <% if (req.params.view == "resource") { %>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choose Resource <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Resource 1</a></li>
+                            </ul>
+                            <% } else { %>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choose Project <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Project 1</a></li>
+                            </ul>
+                            <% } %>
+                        </li>
+                    </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <% if (req.user && req.user.image) { %>
-                        <li><p class="navbar-text">Hi, <%=req.user.displayName%>!</p></li>
-                        <li><a href="#" id="settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></li>
-                        <li><img class="profile-image" src="<%=req.user.image%>"/></li>
-                        <li><a href="/auth/logout">Logout <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></a></li>
+                        <% if (req.user) { %>
+                            <li><p class="navbar-text">Hi, <%=req.user.displayName%>!</p></li>
+                            <li><a href="#" id="settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></li>
+                            <% if(req.user.image) { %>
+                                <li><img class="profile-image" src="<%=req.user.image%>"/></li>
+                            <% } %>
+                            <li><a href="/auth/logout">Logout <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></a></li>
                         <% } else { %>
-                        <li><a href="/auth/login">Login <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></a></li>
+                            <li><a href="/auth/login">Login <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></a></li>
                         <% } %>
                     </ul>
                 </div>
