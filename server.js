@@ -89,7 +89,7 @@ app.get("/", (req, res, next) => {
   if (req.user)
     res.redirect("/gantt");
   else
-    render(req, res, "index.ejs"); 
+    render(req, res, "login.ejs"); 
 });
 
 app.get("/gantt/:view?/:project?", requireUser, requireData, (req, res, next) => {
