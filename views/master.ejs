@@ -11,9 +11,21 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 
         <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" integrity="sha256-nFp4rgCvFsMQweFQwabbKfjrBwlaebbLkE29VFR0K40=" crossorigin="anonymous" />
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js" integrity="sha256-urCxMaTtyuE8UK5XeVYuQbm/MhnXflqZ/B9AOkyTguo=" crossorigin="anonymous"></script>
+
+        <script>
+            $(function() {
+                $(".input-daterange").datepicker({
+                    calendarWeeks: true,
+                    autoclose: true,
+                    format: "dd-mm-yyyy"
+                });
+            });
+        </script>
     </head>
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -31,6 +43,7 @@
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <% if (req.user) { %>
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choose View <span class="caret"></span></a>
@@ -44,21 +57,36 @@
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <% if (req.params.view == "resource") { %>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choose Resource <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Resource 1</a></li>
-                            </ul>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choose Resource <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <% req.session.pa.persons
+                                        .filter(person => person.active === "t")
+                                        .forEach(person => { %>
+                                        <li><a href="/gantt/resource/<%=person.localid%>"><%-person.firstname + " " + person.lastname%></a></li>
+                                    <% }); %>
+                                </ul>
+                            <% } else if (req.params.view == "time") { %>
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <input type="text" class="input-sm form-control" name="start" />
+                                    <span class="input-group-addon">to</span>
+                                    <input type="text" class="input-sm form-control" name="end" />
+                                </div>
                             <% } else { %>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choose Project <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Project 1</a></li>
-                            </ul>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choose Project <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <% req.session.pa.projects
+                                        .filter(project => project.active === "t")
+                                        .forEach(project => { %>
+                                        <li><a href="/gantt/project/<%=project.localid%>"><%-project.name%></a></li>
+                                    <% }); %>
+                                </ul>
                             <% } %>
                         </li>
                     </ul>
+                    <% } %>
                     <ul class="nav navbar-nav navbar-right">
                         <% if (req.user) { %>
-                            <li><p class="navbar-text">Hi, <%=req.user.displayName%>!</p></li>
+                            <li><p class="navbar-text">Hi, <%= req.user.displayName %>!</p></li>
                             <li><a href="#" id="settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></li>
                             <% if(req.user.image) { %>
                                 <li><img class="profile-image" src="<%=req.user.image%>"/></li>
@@ -72,7 +100,7 @@
             </div>
         </nav>
         <div class="container-fluid main-content">
-            <%- include(content, data); %>
+            <%- include(content, this); %>
         </div>
     </body>
 </html>
