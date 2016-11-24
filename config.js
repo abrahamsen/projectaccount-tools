@@ -32,6 +32,7 @@ nconf
 
 checkConfig("OAUTH2_CLIENT_ID");
 checkConfig("OAUTH2_CLIENT_SECRET");
+checkConfig("MONGODB_URI");
 
 function checkConfig (setting) {
     if (!nconf.get(setting)) {

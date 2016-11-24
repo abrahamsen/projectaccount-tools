@@ -115,6 +115,15 @@ function initGantt(id, ganttData) {
             console.log("subscale date: " + date);
             return "Q" + (Math.floor(date.getMonth()/3) + 1)
         }*/
+    },{
+        unit: "year",
+        step: 1,
+        date: "%Y"
+        /*step: 3, //quarter only works if the gantt start date matches the start of a quarter
+        template: function(date) {
+            console.log("subscale date: " + date);
+            return "Q" + (Math.floor(date.getMonth()/3) + 1)
+        }*/
     }];
     gantt.config.date_scale = "Week %W";
     gantt.config.scale_height = 40;
@@ -129,7 +138,7 @@ function initGantt(id, ganttData) {
     }, 1000*60);*/
     
     gantt.init(id);
-    gantt.parse(ganttData);
+    gantt.parse({ data: ganttData});
 }
 
 //parses dates in the format "2016-12-24" or "2016-12-24 23:59:59"
@@ -155,7 +164,7 @@ var ganttConverters = {
         project.end = project.dateend == null ? null : parseDate(project.dateend);
 
         return {
-            id: ganttConverters.id++,
+            id: ganttConverters.lastProject,
             text: project.name,
             start_date: project.start,
             duration: dateDiffInDaysMinOne(project.start, project.end),
