@@ -5,7 +5,7 @@ const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-const pa = require("./projectAccount");
+const pa = require("./projectaccount-api");
 const config = require("./config");
 const auth = require("./oauth2");
 const compression = require("compression");
@@ -116,28 +116,6 @@ app.post("/usertoken", requireUser, (req, res) => {
         }
     });
 });
-/*
-app.get("/user", requireUser, (req, res) => {
-    pa.getUser(req.session.usertoken, respond(req, res));
-});
-
-app.get("/project", requireUser, (req, res) => {
-    console.log("projects, user: ", req.user);
-    pa.getProjects(req.session.usertoken, respond(req, res));
-});
-
-app.get("/module", requireUser, (req, res) => {
-    pa.getModules(req.session.usertoken, req.query.project, respond(req, res));
-});
-
-app.get("/milestone", requireUser, (req, res) => {
-    pa.getMilestones(req.session.usertoken, req.query.project, respond(req, res));
-});
-
-app.get("/projectdata", requireUser, (req, res) => {
-    pa.getProjectData(req.session.usertoken, req.query.project, respond(req, res));
-});
-*/
 
 app.get("/tasksbyproject", requireUser, (req, res) => {
     pa.getTasksByProject(req.session.usertoken, req.query.project, respond(req, res));

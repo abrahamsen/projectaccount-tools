@@ -1,5 +1,8 @@
 $navheight: 50px;
 
+html, body {
+    height: 100%;
+}
 *, *:before, *:after {
     box-sizing: border-box;
 }
@@ -13,7 +16,7 @@ body {
 }
 
 .main-content {
-    height: calc(100% - #{$navheight});
+    height: 100%; //calc(100% - #{$navheight});
 }
 
 .profile-image {
@@ -21,4 +24,8 @@ body {
     max-height: 40px;
     margin: 5px;
     border-radius: 50%;
+}
+
+#gantt_here {
+    height: 100%;
 }

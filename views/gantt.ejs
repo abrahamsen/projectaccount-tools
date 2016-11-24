@@ -1,6 +1,6 @@
 
-<link rel="stylesheet" href="dhtmlxgantt.css" type="text/css" media="screen" title="no title" charset="utf-8">
-<script src="dhtmlxgantt.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" href="/dhtmlxgantt.css" type="text/css" media="screen" title="no title" charset="utf-8">
+<script src="/dhtmlxgantt.js" type="text/javascript" charset="utf-8"></script>
 
 <div id="gantt_here"></div>
 <div class="progress" id="taskloadprogress">
@@ -12,20 +12,18 @@
 
     if (params.view == "project" && params.key) {
         $.ajax({
-            url: "/projectdata",
+            url: "/tasksbyproject",
             data: { 
                 project: params.key
             },
             dataType: "json",
             type: "GET",
             success: function(data, textStatus, jqXHR) {
-                initGantt("gantt_here");
-                console.log("project data", data);
-                
-                project.start = $.datepicker.parseDate("yy-mm-dd", project.datestart);
-                project.end = project.dateend == null ? null : $.datepicker.parseDate("yy-mm-dd", project.dateend);
-                
-                (cbs.project || $.noop)(project)
+                $("#taskloadprogress").remove();
+                var project = pa.projects.find(p => p.localid == params.key);
+                var ganttData = []
+
+                ganttData.push(ganttConverters.project(project))
                 
                 $.each(data.milestone, function() {
                     var milestone = this,
@@ -48,10 +46,10 @@
                         (cbs.task || $.noop)(project, milestone, task);
                     });
                 });
-                $("#projectPopup").dialog("close");
-                gantt.parse(ganttData);
+                
+                initGantt("gantt_here", ganttData);
             },
-            complete: function(jqXHR, textStatus) {
+            error: function(jqXHR, textStatus) {
                 $("#taskloadprogress").remove();
             }
         });

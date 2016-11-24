@@ -5,16 +5,18 @@ if (typeof String.prototype.trimLeft !== "function") {
         return this.replace(/^\s+/, "");
     };
 }
+
 if (typeof String.prototype.trimRight !== "function") {
     String.prototype.trimRight = function() {
         return this.replace(/\s+$/, "");
     };
 }
+
 if (typeof Array.prototype.map !== "function") {
     Array.prototype.map = function(callback, thisArg) {
         var i, 
-                n = this.length, 
-                a = [];
+            n = this.length, 
+            a = [];
         for (i = 0; i < n; i++) {
             if (i in this) 
                 a[i] = callback.call(thisArg, this[i]);
@@ -22,6 +24,7 @@ if (typeof Array.prototype.map !== "function") {
         return a;
     };
 }
+
 function getCookies() {
     var c = document.cookie, v = 0, cookies = {};
     if (document.cookie.match(/^\s*\$Version=(?:"1"|1);\s*(.*)/)) {
@@ -44,15 +47,19 @@ function getCookies() {
     }
     return cookies;
 }
+
 function getCookie(name) {
     return getCookies()[name];
 }
+
 function setCookie(name, value) {
     document.cookie = name + "=" + value + "; expires=Thu, 18 Dec 2099 12:00:00 UTC";
 }
+
 function htmlToText(html) {
     return $("<span>").html(html).text();
 }
+
 function dateDiffInDays(a, b) {
     if (b == null)
         return null;
@@ -70,7 +77,7 @@ function dateDiffInDaysMinOne(a, b) {
     return d;
 }
 
-function initGantt(id) {
+function initGantt(id, ganttData) {
     gantt.config.xml_date = "%Y-%m-%d %H:%i:%s";
     gantt.config.scale_unit = "week";
     gantt.config.subscales = [{
@@ -96,12 +103,31 @@ function initGantt(id) {
     }, 1000*60);*/
     
     gantt.init(id);
+    gantt.parse(ganttData);
+}
+
+//parses dates in the format "2016-12-24" or "2016-12-24 23:59:59"
+function parseDate(input) {
+    var parts = input.split(" ");
+    var dateParts = parts[0].split("-");
+    var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10)-1, parseInt(parts[2], 10));
+    if (parts.length > 1) {
+        var hms = parts[1].split(":");
+        d.setHours(parseInt(hms[0], 10));
+        d.setMinutes(parseInt(hms[1], 10));
+        d.setSeconds(parseInt(hms[2], 10));
+    }
+    return d;
 }
 
 var ganttConverters = {
     id: 1,
     project: function(project) {
         ganttConverters.lastProject = ganttConverters.id++;
+
+        project.start = parseDate(project.datestart);
+        project.end = project.dateend == null ? null : parseDate(project.dateend);
+
         return {
             id: ganttConverters.id++,
             text: project.name,
