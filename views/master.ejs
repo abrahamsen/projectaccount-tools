@@ -16,8 +16,12 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" integrity="sha256-nFp4rgCvFsMQweFQwabbKfjrBwlaebbLkE29VFR0K40=" crossorigin="anonymous" />
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js" integrity="sha256-urCxMaTtyuE8UK5XeVYuQbm/MhnXflqZ/B9AOkyTguo=" crossorigin="anonymous"></script>
-
+        
+        <!-- Local scripts -->
+        <script src="/util.js" integrity="sha256-urCxMaTtyuE8UK5XeVYuQbm/MhnXflqZ/B9AOkyTguo=" crossorigin="anonymous"></script>
         <script>
+            var params = <%- JSON.stringify(req.params) %>,
+                pa = <%- JSON.stringify(req.session.pa) %>;
             $(function() {
                 $(".input-daterange").datepicker({
                     calendarWeeks: true,
@@ -62,7 +66,7 @@
                                     <% req.session.pa.persons
                                         .filter(person => person.active === "t")
                                         .forEach(person => { %>
-                                        <li><a href="/gantt/resource/<%=person.localid%>"><%-person.firstname + " " + person.lastname%></a></li>
+                                        <li><a href="/gantt/resource/<%= person.localid %>"><%- person.firstname + " " + person.lastname %></a></li>
                                     <% }); %>
                                 </ul>
                             <% } else if (req.params.view == "time") { %>
@@ -77,7 +81,7 @@
                                     <% req.session.pa.projects
                                         .filter(project => project.active === "t")
                                         .forEach(project => { %>
-                                        <li><a href="/gantt/project/<%=project.localid%>"><%-project.name%></a></li>
+                                        <li><a href="/gantt/project/<%= project.localid %>"><%- project.name %></a></li>
                                     <% }); %>
                                 </ul>
                             <% } %>

@@ -1,3 +1,7 @@
+
+<link rel="stylesheet" href="dhtmlxgantt.css" type="text/css" media="screen" title="no title" charset="utf-8">
+<script src="dhtmlxgantt.js" type="text/javascript" charset="utf-8"></script>
+
 <div id="gantt_here"></div>
 <div class="progress" id="taskloadprogress">
   <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
@@ -5,32 +9,56 @@
   </div>
 </div>
 <script>
-    var gantt = gantt || {};
-    gantt.config.xml_date = "%Y-%m-%d %H:%i:%s";
-    gantt.config.scale_unit = "week";
-    gantt.config.subscales = [{
-        unit: "month",
-        step: 1,
-        date: "%F"
-        /*step: 3, //quarter only works if the gantt start date matches the start of a quarter
-        template: function(date) {
-            console.log("subscale date: " + date);
-            return "Q" + (Math.floor(date.getMonth()/3) + 1)
-        }*/
-    }];
-    gantt.config.date_scale = "Week %W";
-    gantt.config.scale_height = 40;
-    
-    /*//add "Today" marker
-    var marker = gantt.addMarker({ start_date: new Date(), css: "today", title:date_to_str( new Date())});
-    setInterval(function(){
-        var today = gantt.getMarker(marker);
-        today.start_date = new Date();
-        today.title = date_to_str(today.start_date);
-        gantt.updateMarker(marker);
-    }, 1000*60);*/
-    
-    gantt.init("gantt_here");
 
-    $("#taskloadprogress").remove();
+    if (params.view == "project" && params.key) {
+        $.ajax({
+            url: "/projectdata",
+            data: { 
+                project: params.key
+            },
+            dataType: "json",
+            type: "GET",
+            success: function(data, textStatus, jqXHR) {
+                initGantt("gantt_here");
+                console.log("project data", data);
+                
+                project.start = $.datepicker.parseDate("yy-mm-dd", project.datestart);
+                project.end = project.dateend == null ? null : $.datepicker.parseDate("yy-mm-dd", project.dateend);
+                
+                (cbs.project || $.noop)(project)
+                
+                $.each(data.milestone, function() {
+                    var milestone = this,
+                        tasks = $.grep(data.tasks, function(task) {
+                            return task.milestoneid == milestone.id;
+                        });
+                    
+                    milestone.start = milestone.dateopen == null ? project.start : $.datepicker.parseDate("yy-mm-dd", milestone.dateopen);
+                    milestone.end = milestone.datedue == null ? project.end : $.datepicker.parseDate("yy-mm-dd", milestone.datedue);
+                    
+                    (cbs.milestone || $.noop)(project, milestone);
+                    console.log("milestone tasks: ", tasks);
+                    
+                    $.each(tasks, function() {
+                        var task = this;
+                        
+                        task.start = task.dateopen == null ? milestone.start : $.datepicker.parseDate("yy-mm-dd", task.dateopen);
+                        task.end = task.datedue == null ? milestone.end : $.datepicker.parseDate("yy-mm-dd", task.datedue);
+                        
+                        (cbs.task || $.noop)(project, milestone, task);
+                    });
+                });
+                $("#projectPopup").dialog("close");
+                gantt.parse(ganttData);
+            },
+            complete: function(jqXHR, textStatus) {
+                $("#taskloadprogress").remove();
+            }
+        });
+    }
+    else {
+        $("#taskloadprogress").remove();
+    }
+
+    
 </script>
