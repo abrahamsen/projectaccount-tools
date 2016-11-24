@@ -63,16 +63,6 @@ var pa = module.exports = {
     getTasksByProject: function(key, projectid, cb) {
         request(key, "task", {limit: 1000, excludeclosed: "t", localid: projectid}, cb);
     },
-    getProjectData: function(key, project, cb) {
-        async.parallel({
-            milestone: function(asyncCb) {
-                pa.getMilestones(key, project, asyncCb);
-            },
-            tasks: function(asyncCb) {
-                pa.getTasks(key, project, asyncCb);
-            }
-        }, cb);
-    },
     getUserData: function(key, cb) {
         async.parallel({
             projects: function(asyncCb) {
@@ -83,6 +73,9 @@ var pa = module.exports = {
             },
             clients: function(asyncCb) {
                 pa.getClients(key, asyncCb);
+            },
+            milestones: function(asyncCb) {
+                pa.getMilestones(key, asyncCb);
             },
             tasks: function(asyncCb) {
                 pa.getTasks(key, asyncCb);

@@ -20,8 +20,8 @@
         <!-- Local scripts -->
         <script src="/util.js"></script>
         <script>
-            var params = <%- JSON.stringify(req.params) %>,
-                pa = <%- JSON.stringify(req.session.pa) %>;
+            var params = <%- JSON.stringify(req.params) %>;
+            var pa = <%- "pa" in req.session ? JSON.stringify(req.session.pa) : "null" %>;
             $(function() {
                 $(".input-daterange").datepicker({
                     calendarWeeks: true,

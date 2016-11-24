@@ -3,60 +3,37 @@
 <script src="/dhtmlxgantt.js" type="text/javascript" charset="utf-8"></script>
 
 <div id="gantt_here"></div>
-<div class="progress" id="taskloadprogress">
-  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-    Loading tasks...
-  </div>
-</div>
 <script>
-
     if (params.view == "project" && params.key) {
-        $.ajax({
-            url: "/tasksbyproject",
-            data: { 
-                project: params.key
-            },
-            dataType: "json",
-            type: "GET",
-            success: function(data, textStatus, jqXHR) {
-                $("#taskloadprogress").remove();
-                var project = pa.projects.find(p => p.localid == params.key);
-                var ganttData = []
-
-                ganttData.push(ganttConverters.project(project))
-                
-                $.each(data.milestone, function() {
-                    var milestone = this,
-                        tasks = $.grep(data.tasks, function(task) {
-                            return task.milestoneid == milestone.id;
-                        });
-                    
-                    milestone.start = milestone.dateopen == null ? project.start : $.datepicker.parseDate("yy-mm-dd", milestone.dateopen);
-                    milestone.end = milestone.datedue == null ? project.end : $.datepicker.parseDate("yy-mm-dd", milestone.datedue);
-                    
-                    (cbs.milestone || $.noop)(project, milestone);
-                    console.log("milestone tasks: ", tasks);
-                    
-                    $.each(tasks, function() {
-                        var task = this;
-                        
-                        task.start = task.dateopen == null ? milestone.start : $.datepicker.parseDate("yy-mm-dd", task.dateopen);
-                        task.end = task.datedue == null ? milestone.end : $.datepicker.parseDate("yy-mm-dd", task.datedue);
-                        
-                        (cbs.task || $.noop)(project, milestone, task);
-                    });
-                });
-                
-                initGantt("gantt_here", ganttData);
-            },
-            error: function(jqXHR, textStatus) {
-                $("#taskloadprogress").remove();
-            }
+        var ganttData = [];
+        
+        var project = pa.projects.find(function(p) {
+            return p.localid == params.key;
         });
+
+        ganttData.push(ganttConverters.project(project))
+        
+        var milestones = pa.milestones.filter(function(m) { 
+            return m.projectid == project.id; 
+        });
+        $.each(milestones, function() {
+            var milestone = this;
+            
+            ganttData.push(ganttConverters.milestone(milestone, project));
+
+            var tasks = pa.tasks.filter(function(task) {
+                return task.milestoneid == milestone.id;
+            });
+            
+            $.each(tasks, function() {
+                var task = this;
+                ganttData.push(ganttConverters.task(task, milestone));
+            });
+        });
+        
+        initGantt("gantt_here", ganttData);
     }
     else {
-        $("#taskloadprogress").remove();
+        
     }
-
-    
 </script>

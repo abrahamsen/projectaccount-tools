@@ -24,6 +24,32 @@ if (typeof Array.prototype.map !== "function") {
         return a;
     };
 }
+if (typeof Array.prototype.filter !== "function") {
+    Array.prototype.filter = function(fun/*, thisArg*/) {
+        if (this === void 0 || this === null) {
+            throw new TypeError();
+        }
+
+        var t = Object(this);
+        var len = t.length >>> 0;
+        if (typeof fun !== 'function') {
+            throw new TypeError();
+        }
+
+        var res = [];
+        var thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+        for (var i = 0; i < len; i++) {
+            if (i in t) {
+                var val = t[i];
+                if (fun.call(thisArg, val, i, t)) {
+                    res.push(val);
+                }
+            }
+        }
+
+        return res;
+    };
+}
 
 function getCookies() {
     var c = document.cookie, v = 0, cookies = {};
@@ -61,7 +87,7 @@ function htmlToText(html) {
 }
 
 function dateDiffInDays(a, b) {
-    if (b == null)
+    if (a == null || b == null)
         return null;
     // Discard the time and time-zone information.
     var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
@@ -110,7 +136,7 @@ function initGantt(id, ganttData) {
 function parseDate(input) {
     var parts = input.split(" ");
     var dateParts = parts[0].split("-");
-    var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10)-1, parseInt(parts[2], 10));
+    var d = new Date(parseInt(dateParts[0], 10), parseInt(dateParts[1], 10)-1, parseInt(dateParts[2], 10));
     if (parts.length > 1) {
         var hms = parts[1].split(":");
         d.setHours(parseInt(hms[0], 10));
@@ -137,8 +163,12 @@ var ganttConverters = {
             base: project
         };
     },
-    milestone: function(milestone) {
+    milestone: function(milestone, parent) {
         ganttConverters.lastMilestone = ganttConverters.id++;
+        
+        milestone.start = milestone.dateopen == null ? parent.start : parseDate(milestone.dateopen);
+        milestone.end = milestone.datedue == null ? parent.end : parseDate(milestone.datedue);
+        
         return {
             id: ganttConverters.lastMilestone,
             text: milestone.title,
@@ -150,7 +180,9 @@ var ganttConverters = {
             base: milestone
         };
     },
-    task: function(task) {
+    task: function(task, parent) {
+        task.start = task.dateopen == null ? parent.start : parseDate(task.dateopen);
+        task.end = task.datedue == null ? parent.end : parseDate(task.datedue);
         return {
             id: ganttConverters.id++,
             text: task.title,
