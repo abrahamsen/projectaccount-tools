@@ -13,7 +13,8 @@ nconf
         "OAUTH2_CLIENT_SECRET",
         "OAUTH2_CALLBACK",
         "PORT",
-        "SECRET"
+        "SECRET",
+        "MONGODB_URI"
     ])
     // 3. Config file
     .file({ file: path.join(__dirname, "config.json") })
