@@ -21,10 +21,6 @@
     "passport-google-oauth20": "^1.0.0"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-clean-css": "^2.0.13",
-    "gulp-concat-css": "^2.3.0",
-    "gulp-sass": "^2.3.2",
     "nodemon": "^1.11.0"
   },
   "engines": {
