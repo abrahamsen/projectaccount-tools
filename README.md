@@ -1,9 +1,13 @@
 # projectaccount-tools
 
-## Setting up your development environment
-
+## First-time setup of your development environment
+* Install Git tools for Windows: <https://git-for-windows.github.io/>
+* Install newest LTS version of NodeJS, v6+ (includes NPM): <https://nodejs.org>
+* Install Visual Studio Code (vscode): <https://code.visualstudio.com>
+* Create an account on Github (before you can push changes to the repository, your account needs to be added)
+* Open the program Git Bash, navigate to the folder you would like the code to be checked out in, and run the command: `git clone https://github.com/abrahamsen/projectaccount-tools.git`
+* Optional: To enable Git to remember your username/password, run the following command in Git Bash: `git config --global credential.helper wincred`
 * Add a config.json in the root folder with the configuration for OAUTH and MongoDB
-* Install newest LTS version of NodeJS, v6+ (includes NPM)
 * Install modules - from command prompt in project folder, run `npm install`
 
 ---
