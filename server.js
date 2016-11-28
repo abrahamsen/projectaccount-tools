@@ -100,6 +100,10 @@ app.get("/gantt/:view?/:key?", requireUser, requireData, (req, res, next) => {
     render(req, res, "gantt.ejs");
 });
 
+app.get("/settings", requireUser, (req, res, next) => {
+    render(req, res, "settings.ejs");
+});
+
 app.get("/usertoken/:error?", auth.required, (req, res, next) => {
     if (req.params.error) {
         db.user.get(req.user.id, (err, user) => {

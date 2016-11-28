@@ -91,7 +91,7 @@
                     <ul class="nav navbar-nav navbar-right">
                         <% if (req.user) { %>
                             <li><p class="navbar-text">Hi, <%= req.user.displayName %>!</p></li>
-                            <li><a href="#" id="settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></li>
+                            <li><a href="/settings" id="settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></li>
                             <% if(req.user.image) { %>
                                 <li><img class="profile-image" src="<%=req.user.image%>"/></li>
                             <% } %>
