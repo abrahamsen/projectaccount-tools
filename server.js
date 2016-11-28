@@ -9,7 +9,7 @@ const pa = require("./projectaccount-api");
 const config = require("./config");
 const auth = require("./oauth2");
 const compression = require("compression");
-const data = require("./data");
+const db = require("./data");
 
 const app = express();
 app.set("view engine", "ejs");
@@ -51,9 +51,9 @@ function respond(req, res) {
 var requireUser = [
     auth.required, 
     (req, res, next) => {
-        data.user.get(req.user.id, (err, user) => {
+        db.user.get(req.user.id, (err, user) => {
             if (user == null) {
-                data.user.save(req.user, (err, user) => {
+                db.user.save(req.user, (err, user) => {
                     if (err) 
                         return console.error(err);
                     res.redirect("/usertoken");
@@ -76,7 +76,8 @@ function requireData(req, res, next) {
     else {
         pa.getUserData(req.session.usertoken, function(err, data) {
             if (err) {
-                debugger;
+                console.error(err);
+                return res.redirect("/usertoken/invalid");
             }
             req.session.pa = data;
             next();
@@ -99,18 +100,33 @@ app.get("/gantt/:view?/:key?", requireUser, requireData, (req, res, next) => {
     render(req, res, "gantt.ejs");
 });
 
-app.get("/usertoken/:error?", requireUser, (req, res) => {
-    res.render("usertoken.ejs", {user: req.user});
+app.get("/usertoken/:error?", auth.required, (req, res, next) => {
+    if (req.params.error) {
+        db.user.get(req.user.id, (err, user) => {
+            if (user != null) {
+                user.token = null;
+                db.user.save(req.user, (err, user) => {
+                    next();
+                });
+            }
+            else
+                next();
+        });
+    }
+    else
+        next();
+}, (req, res) => {
+    render(req, res, "usertoken.ejs");
 });
 
-app.post("/usertoken", requireUser, (req, res) => {
-    data.user.get(req.user.id, (err, user) => {
+app.post("/usertoken", auth.required, (req, res) => {
+    db.user.get(req.user.id, (err, user) => {
         if (user == null) {
             res.redirect("/usertoken/error");
         }
         else {
             user.token = req.body.usertoken;
-            data.user.save(user, (err, result) => {
+            db.user.save(user, (err, result) => {
                 res.redirect("/");
             });
         }
