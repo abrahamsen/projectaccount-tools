@@ -121,8 +121,10 @@ var pa = module.exports = {
         async.parallel({
             notes: function(asyncCb) {
                 pa.getTaskNotes(key, taskid, asyncCb);
+            },
+            documents: function(asyncCb) {
+                pa.getTaskDocuments(key, taskid, asyncCb);
             }
-            //TODO: documents
         }, cb);
     }
 };
