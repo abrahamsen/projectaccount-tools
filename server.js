@@ -20,6 +20,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(compression()); 
 
 //enable session storage
+//TODO: add connect-mongo as session storage
 app.use(session({
     resave: false,
     saveUninitialized: false,
