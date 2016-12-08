@@ -137,10 +137,6 @@ app.post("/usertoken", auth.required, (req, res) => {
     });
 });
 
-app.get("/tasksbyproject", requireUser, (req, res) => {
-    pa.getTasksByProject(req.session.usertoken, req.query.project, respond(req, res));
-});
-
 app.use("/v1", express.static(path.resolve(__dirname, "v1")));
 app.use(express.static(path.resolve(__dirname, "client")));
 

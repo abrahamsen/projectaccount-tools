@@ -34,13 +34,15 @@ function request(key, resource, parameters, cb) {
     }).end();
 }
 
-function cacheableRequest(key, resource, cb) {
-    
-}
-
 var pa = module.exports = {
     getUser: function(key, cb) {
         request(key, "me", {}, cb);
+    },
+    getCustomer: function(key, cb) {
+        request(key, "customer", {}, cb);
+    },
+    getSettings: function(key, cb) {
+        request(key, "settings", {}, cb);
     },
     getPersons: function(key, cb) {
         request(key, "person", {limit: 1000}, cb);
@@ -57,11 +59,23 @@ var pa = module.exports = {
     getMilestones: function(key, cb) {
         request(key, "milestone", {limit: 1000, complete: "f"}, cb);
     },
+    getTaskStatuses: function(key, cb) {
+        request(key, "taskstatus", {limit: 1000}, cb);
+    },
+    getTaskPriorities: function(key, cb) {
+        request(key, "taskpriority", {limit:1000}, cb);
+    },
+    getWorkTypes: function(key, cb) {
+        request(key, "projectworktype", {limit: 1000}, cb);
+    },
     getTasks: function(key, cb) {
         request(key, "task", {limit: 1000, excludeclosed: "t"}, cb);
     },
-    getTasksByProject: function(key, projectid, cb) {
-        request(key, "task", {limit: 1000, excludeclosed: "t", localid: projectid}, cb);
+    getTaskNotes: function(key, taskid, cb) {
+        request(key, "tasknote", {limit: 1000, taskid: taskid}, cb);
+    },
+    getTaskDocuments: function(key, taskid, cb) {
+        request(key, "document", {limit: 1000, taskid: taskid}, cb);
     },
     getUserData: function(key, cb) {
         async.parallel({
@@ -77,9 +91,38 @@ var pa = module.exports = {
             milestones: function(asyncCb) {
                 pa.getMilestones(key, asyncCb);
             },
+            modules: function(asyncCb) {
+                pa.getModules(key, asyncCb);
+            },
+            statuses: function(asyncCb) {
+                pa.getTaskStatuses(key, asyncCb);
+            },
+            priorities: function(asyncCb) {
+                pa.getTaskPriorities(key, asyncCb);
+            },
+            worktypes: function(asyncCb) {
+                pa.getWorkTypes(key, asyncCb);
+            },
             tasks: function(asyncCb) {
                 pa.getTasks(key, asyncCb);
+            },
+            user: function(asyncCb) {
+                pa.getUser(key, asyncCb);
+            },
+            customer: function(asyncCb) {
+                pa.getCustomer(key, asyncCb);
+            }/*, //commented out, as settings API is currently returning server error 500
+            settings: function(asyncCb) {
+                pa.getSettings(key, asyncCb);
+            }*/
+        }, cb);
+    },
+    getTaskDetails: function(key, taskid, cb) {
+        async.parallel({
+            notes: function(asyncCb) {
+                pa.getTaskNotes(key, taskid, asyncCb);
             }
+            //TODO: documents
         }, cb);
     }
 };

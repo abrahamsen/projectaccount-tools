@@ -21,5 +21,8 @@ var data = module.exports = {
                 cb(err, result);
             });
         }
+    },
+    getDB: function() {
+        return db;
     }
 };
