@@ -228,8 +228,8 @@ var ganttConverters = {
             duration: dateDiffInDaysMinOne(modules.start_date, modules.end_date),
             open: true,
             parent: ganttConverters.lastProject,
-            progress: parseFloat(modules.progress) / 100
-          //  base: project
+            progress: parseFloat(modules.progress) / 100,
+            base: project
         };
     },
       resource: function(person, parent) {
@@ -258,8 +258,8 @@ var ganttConverters = {
             text: task.title,
             start_date: task.start,
             duration: dateDiffInDaysMinOne(task.start, task.end),
-           parent: ganttConverters.lastModule,
-           base: ganttConverters.modules
+           parent: ganttConverters.lastModule
+          // base: ganttConverters.modules
         };
     }
 };

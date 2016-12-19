@@ -1,8 +1,4 @@
 
-/*
-rev 1 AAK  17:52
-rev 2 AAK  18:12
-*/
 <link rel="stylesheet" href="/dhtmlxgantt.css" type="text/css" media="screen" title="no title" charset="utf-8">
 <script src="/dhtmlxgantt.js" type="text/javascript" charset="utf-8"></script>
 
@@ -16,70 +12,45 @@ rev 2 AAK  18:12
         });
 
         ganttData.push(ganttConverters.project(project))
-        
-        /*
-        var milestones = pa.milestones.filter(function(m) { 
-            return m.projectid == project.id; 
+     
+        var modules = pa.modules.filter(function(m) { 
+        return m.projectid == project.id; 
         });
-        */
-
-            var modules = pa.modules.filter(function(m) { 
-            return m.projectid == project.id; 
-        });
-      
+   
         $.each(modules, function() {
             var module = this;
             ganttData.push(ganttConverters.modules(module, project));
-           
             var tasks;
-            tasks = pa.tasks.filter(function(t) {
-                return t;//.moduleid == 409669;//module.id;
-                });
-                var count=0;
-                $.each(tasks, function() {
-                count++;
-                var task = this;
-               
-                if (count < 10 )
-                    ganttData.push(ganttConverters.task(task),module);
+            tasks = pa.tasks;
+                 $.each(tasks, function() { 
+                    var task = this ;
+                    if(task.moduleid == module.moduleid){
+                    ganttData.push(ganttConverters.task(task,project));
+                    }
+                 });
+         });
 
-                
-           });
-           
-
-            });
-      
-            
         initGantt("gantt_here", ganttData);
     }
 
 
-
-
-
-
-
-
-
-
     else if (params.view == "resource" && params.key){
 
-         var ganttData = [];
-        
+        var ganttData = [];
         var resource = pa.persons.find(function(p) {
             return p.localid == params.key;
         });
 
         ganttData.push(ganttConverters.resource(resource))
         
-            var tasks = pa.tasks.filter(function(m) { 
+        var tasks = pa.tasks.filter(function(m) { 
             return m.projectid == m.projectid;
         });
 
           $.each(tasks, function() {
-                var task = this;
-                ganttData.push(ganttConverters.task(task, resource));
+            var task = this;
+            ganttData.push(ganttConverters.task(task, resource));
            });
-           initGantt("gantt_here", ganttData);
+        initGantt("gantt_here", ganttData);
     }
 </script>
