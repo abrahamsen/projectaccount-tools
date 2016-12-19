@@ -13,27 +13,69 @@
 
         ganttData.push(ganttConverters.project(project))
         
+        /*
         var milestones = pa.milestones.filter(function(m) { 
             return m.projectid == project.id; 
         });
-        $.each(milestones, function() {
-            var milestone = this;
-            
-            ganttData.push(ganttConverters.milestone(milestone, project));
+        */
 
-            var tasks = pa.tasks.filter(function(task) {
-                return task.milestoneid == milestone.id;
-            });
-            
-            $.each(tasks, function() {
-                var task = this;
-                ganttData.push(ganttConverters.task(task, milestone));
-            });
+            var modules = pa.modules.filter(function(m) { 
+            return m.projectid == project.id; 
         });
-        
+      
+        $.each(modules, function() {
+            var module = this;
+            ganttData.push(ganttConverters.modules(module, project));
+           
+            var tasks;
+            tasks = pa.tasks.filter(function(t) {
+                return t;//.moduleid == 409669;//module.id;
+                });
+                var count=0;
+                $.each(tasks, function() {
+                count++;
+                var task = this;
+               
+                if (count < 10 )
+                    ganttData.push(ganttConverters.task(task),module);
+
+                
+           });
+           
+
+            });
+      
+            
         initGantt("gantt_here", ganttData);
     }
-    else {
+
+
+
+
+
+
+
+
+
+
+    else if (params.view == "resource" && params.key){
+
+         var ganttData = [];
         
+        var resource = pa.persons.find(function(p) {
+            return p.localid == params.key;
+        });
+
+        ganttData.push(ganttConverters.resource(resource))
+        
+            var tasks = pa.tasks.filter(function(m) { 
+            return m.projectid == m.projectid;
+        });
+
+          $.each(tasks, function() {
+                var task = this;
+                ganttData.push(ganttConverters.task(task, resource));
+           });
+           initGantt("gantt_here", ganttData);
     }
 </script>

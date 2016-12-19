@@ -214,6 +214,42 @@ var ganttConverters = {
             base: milestone
         };
     },
+    modules: function(modules, parent) {
+        ganttConverters.lastModule = ganttConverters.id++;
+        
+        modules.start = modules.dateopen == null ? parent.start : parseDate(modules.dateopen);
+        modules.end = modules.datedue == null ? parent.end : parseDate(modules.datedue);
+        
+     
+        return {
+            id: ganttConverters.lastModule,
+            text: modules.module,
+            start_date: modules.start_date,
+            duration: dateDiffInDaysMinOne(modules.start_date, modules.end_date),
+            open: true,
+            parent: ganttConverters.lastProject,
+            progress: parseFloat(modules.progress) / 100
+          //  base: project
+        };
+    },
+      resource: function(person, parent) {
+        ganttConverters.lastperson = ganttConverters.id++;
+        
+        person.start = person.dateopen == null ? person.start : parseDate(person.dateopen);
+        person.end = person.datedue == null ? person.end : parseDate(person.datedue);
+        
+     
+        return {
+            id: ganttConverters.lastPerson,
+            text: person.firstname + " " + person.lastname,
+            start_date: person.start_date,
+            duration: dateDiffInDaysMinOne(person.start_date, person.end_date),
+            open: true,
+            parent: ganttConverters.lastProject,
+            progress: parseFloat(person.progress) / 100,
+            base: person
+        };
+    },
     task: function(task, parent) {
         task.start = task.dateopen == null ? parent.start : parseDate(task.dateopen);
         task.end = task.datedue == null ? parent.end : parseDate(task.datedue);
@@ -222,8 +258,8 @@ var ganttConverters = {
             text: task.title,
             start_date: task.start,
             duration: dateDiffInDaysMinOne(task.start, task.end),
-            parent: ganttConverters.lastMilestone,
-            base: task
+           parent: ganttConverters.lastModule,
+           base: ganttConverters.modules
         };
     }
 };
