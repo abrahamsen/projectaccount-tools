@@ -1,5 +1,6 @@
 "use strict";
 
+
 if (typeof String.prototype.trimLeft !== "function") {
     String.prototype.trimLeft = function() {
         return this.replace(/^\s+/, "");
