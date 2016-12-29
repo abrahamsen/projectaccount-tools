@@ -135,9 +135,7 @@ function initGantt(id, ganttData) {
     gantt.config.columns=[
         {name:"text", label:"Title",  tree:true, width:'100',resize:true },
         {name:"resource",   label:"Resource",  align: "center" },
-        {name:"start_date", label:"Start time", align: "center" },
-        {name:"add",        label:"" }
-        ];
+        {name:"start_date", label:"Start time", align: "center" } ];
     gantt.config.subscales = [{
         unit: "month",
         step: 1,
