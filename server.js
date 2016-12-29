@@ -16,7 +16,7 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({extended: true}))
 
-//enable gzip
+//enable gzip Waaqar Changes
 app.use(compression()); 
 
 //enable session storage
