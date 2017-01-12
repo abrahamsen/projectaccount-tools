@@ -134,8 +134,9 @@ function initGantt(id, ganttData) {
     gantt.config.scale_unit = "week";
     gantt.config.columns=[
         {name:"text", label:"Title",  tree:true, width:'100',resize:true },
-        {name:"resource",   label:"Resource",  align: "center" },
-        {name:"start_date", label:"Start time", align: "center" } ];
+        {name:"resource",   label:"Resource",  align: "center" }
+      //  {name:"duration",   label:"Duration",  align: "center" }
+        ];
     gantt.config.subscales = [{
         unit: "month",
         step: 1,
@@ -187,6 +188,7 @@ function parseDate(input) {
 
 var ganttConverters = {
     id: 1,
+    assignee:'',
     project: function(project) {
         ganttConverters.lastProject = ganttConverters.id++;
 
@@ -263,7 +265,7 @@ var ganttConverters = {
         return {
             id: ganttConverters.id++,
             text: task.title,
-            resource:task.assignees,
+            resource:task.assignees.replace(/\s\w*(,|$)/img, ","), 
             start_date: task.start,
             duration: dateDiffInDaysMinOne(task.start, task.end),
            parent: ganttConverters.lastModule
