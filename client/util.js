@@ -265,7 +265,7 @@ var ganttConverters = {
         return {
             id: ganttConverters.id++,
             text: task.title,
-            resource:task.assignees.replace(/\s\w*(,|$)/img, ","), 
+            resource:task.assignees.replace(/(\s\w*){1,2}(,|$)/img, ","),//.replace(/\s\w*(,|$)/img, ","), 
             start_date: task.start,
             duration: dateDiffInDaysMinOne(task.start, task.end),
            parent: ganttConverters.lastModule
