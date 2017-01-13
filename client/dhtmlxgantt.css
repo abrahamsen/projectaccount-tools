@@ -195,6 +195,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
     -webkit-user-select: none;
     -user-select: none;
     overflow: hidden;
+    width: 60% !important;
 }
 
 .gantt_scale_line {
